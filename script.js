@@ -1,50 +1,50 @@
 
 (function() {
     'use strict';
-
+ 
     let observer;
     let isBoxVisible = false;
     let initialBoxPosition = { x: 90, y: 110 };
     let copyFormat = 'simple';
-
+ 
     function makeElementDraggable(el) {
         el.onmousedown = function(event) {
             event.preventDefault();
-
+ 
             let shiftX = event.clientX - el.getBoundingClientRect().left;
             let shiftY = event.clientY - el.getBoundingClientRect().top;
-
+ 
             function moveAt(pageX, pageY) {
                 const newX = Math.min(Math.max(0, pageX - shiftX), window.innerWidth - el.offsetWidth);
                 const newY = Math.min(Math.max(0, pageY - shiftY), window.innerHeight - el.offsetHeight);
-
+ 
                 el.style.left = newX + 'px';
                 el.style.top = newY + 'px';
-
+ 
                 const backgroundX = initialBoxPosition.x - newX;
                 const backgroundY = initialBoxPosition.y - newY;
                 el.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
             }
-
+ 
             function onMouseMove(event) {
                 moveAt(event.pageX, event.pageY);
             }
-
+ 
             document.addEventListener('mousemove', onMouseMove);
-
+ 
             function onMouseUp() {
                 document.removeEventListener('mousemove', onMouseMove);
                 document.removeEventListener('mouseup', onMouseUp);
             }
-
+ 
             document.addEventListener('mouseup', onMouseUp);
         };
-
+ 
         el.ondragstart = function() {
             return false;
         };
     }
-
+ 
     function addResizeButtons(el, initialWidth, initialHeight) {
         const buttonContainer = document.createElement('div');
         buttonContainer.style.position = 'absolute';
@@ -54,7 +54,7 @@
         buttonContainer.style.flexDirection = 'column';
         buttonContainer.style.gap = '5px';
         el.appendChild(buttonContainer);
-
+ 
         const enlargeButton = document.createElement('button');
         enlargeButton.textContent = '＋';
         enlargeButton.style.padding = '2px 5px';
@@ -74,7 +74,7 @@
             enlargeButton.style.color = '#ffffff';
         };
         buttonContainer.appendChild(enlargeButton);
-
+ 
         const shrinkButton = document.createElement('button');
         shrinkButton.textContent = '－';
         shrinkButton.style.padding = '2px 5px';
@@ -94,20 +94,20 @@
             shrinkButton.style.color = '#ffffff';
         };
         buttonContainer.appendChild(shrinkButton);
-
+ 
         enlargeButton.addEventListener('click', () => {
             el.style.height = (el.clientHeight + 150) + 'px';
         });
-
+ 
         shrinkButton.addEventListener('click', () => {
             el.style.width = initialWidth;
             el.style.height = initialHeight;
         });
     }
-
+ 
     const initialWidth = '170px';
     const initialHeight = '320px';
-
+ 
     const container = document.createElement('div');
     container.id = 'messageIdContainer';
     container.style.position = 'fixed';
@@ -127,17 +127,17 @@
     container.style.backgroundAttachment = 'fixed';
     container.style.backgroundRepeat = 'round';
     document.body.appendChild(container);
-
+ 
     makeElementDraggable(container);
     addResizeButtons(container, initialWidth, initialHeight);
-
+ 
     const title = document.createElement('h2');
     title.textContent = 'AARR Ex Message IDs';
     title.style.margin = '0 0 5px 0';
     title.style.fontSize = '15px';
     title.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
     container.appendChild(title);
-
+ 
     const toolsLink = document.createElement('a');
     toolsLink.href = 'https://aarr-homepage.github.io/page/about5.html';
     toolsLink.target = '_blank';
@@ -149,7 +149,7 @@
     toolsLink.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
     toolsLink.textContent = '🔗other tools';
     container.appendChild(toolsLink);
-
+ 
     const formatButton = document.createElement('button');
     formatButton.textContent = 'Format: Simple IDs';
     formatButton.style.marginBottom = '10px';
@@ -178,7 +178,7 @@
         }
     });
     container.appendChild(formatButton);
-
+ 
     const messageIdList = document.createElement('ul');
     messageIdList.style.listStyleType = 'none';
     messageIdList.style.padding = '0';
@@ -187,7 +187,7 @@
     messageIdList.style.overflowY = 'scroll';
     messageIdList.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
     container.appendChild(messageIdList);
-
+ 
     const startButton = document.createElement('button');
     startButton.textContent = ' Start ';
     startButton.style.marginTop = '5px';
@@ -208,7 +208,7 @@
         startButton.style.color = '#ffffff';
     };
     container.appendChild(startButton);
-
+ 
     const stopButton = document.createElement('button');
     stopButton.textContent = ' Stop ';
     stopButton.style.marginTop = '5px';
@@ -229,7 +229,7 @@
         stopButton.style.color = '#ffffff';
     };
     container.appendChild(stopButton);
-
+ 
     const resetButton = document.createElement('button');
     resetButton.textContent = 'Reset';
     resetButton.style.marginTop = '5px';
@@ -250,7 +250,7 @@
         resetButton.style.color = '#ffffff';
     };
     container.appendChild(resetButton);
-
+ 
     const copyButton = document.createElement('button');
     copyButton.textContent = 'Copy IDs';
     copyButton.style.marginTop = '5px';
@@ -271,7 +271,7 @@
         copyButton.style.color = '#ffffff';
     };
     container.appendChild(copyButton);
-
+ 
     const saveButton = document.createElement('button');
     saveButton.textContent = 'Save File';
     saveButton.style.marginTop = '5px';
@@ -292,7 +292,7 @@
         saveButton.style.color = '#ffffff';
     };
     container.appendChild(saveButton);
-
+ 
     function extractMessageIDs() {
         const messageElements = document.querySelectorAll('[id^="chat-messages-"]');
         const messageIds = new Set();
@@ -302,12 +302,12 @@
         });
         return Array.from(messageIds);
     }
-
+ 
     function extractServerID() {
         const match = window.location.pathname.match(/\/channels\/(\d+)/);
         return match ? match[1] : 'your-server-id';
     }
-
+ 
     function updateMessageIDList() {
         const messageIds = extractMessageIDs();
         messageIds.forEach(id => {
@@ -320,7 +320,7 @@
             }
         });
     }
-
+ 
     function copyMessageIDsToClipboard() {
         const serverID = extractServerID();
         const messageIds = Array.from(messageIdList.children).map(li => {
@@ -340,14 +340,14 @@
             console.error('Failed to copy message IDs: ', err);
         });
     }
-
+ 
     function resetMessageIDList() {
         messageIdList.innerHTML = '';
         if (observer) {
             observer.disconnect();
         }
     }
-
+ 
     function saveMessageIDsToFile() {
         const serverID = extractServerID();
         const messageIds = Array.from(messageIdList.children).map(li => {
@@ -372,7 +372,7 @@
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     }
-
+ 
     startButton.addEventListener('click', () => {
         if (observer) {
             observer.disconnect();
@@ -383,18 +383,18 @@
         });
         observer.observe(document.body, { childList: true, subtree: true });
     });
-
+ 
     stopButton.addEventListener('click', () => {
         if (observer) {
             observer.disconnect();
             observer = null;
         }
     });
-
+ 
     copyButton.addEventListener('click', copyMessageIDsToClipboard);
     resetButton.addEventListener('click', resetMessageIDList);
     saveButton.addEventListener('click', saveMessageIDsToFile);
-
+ 
     const toggleImage = document.createElement('img');
     toggleImage.src = 'https://i.imgur.com/POHPOPN.png';
     toggleImage.style.position = 'fixed';
@@ -405,7 +405,7 @@
     toggleImage.style.left = '75px';
     toggleImage.style.bottom = '123px';
     document.body.appendChild(toggleImage);
-
+ 
     toggleImage.addEventListener('click', () => {
         isBoxVisible = !isBoxVisible;
         container.style.display = isBoxVisible ? 'block' : 'none';
